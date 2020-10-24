@@ -1,23 +1,36 @@
+import { getBabelOutputPlugin } from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import resolve from '@rollup/plugin-node-resolve';
-import uglify from 'rollup-plugin-uglify';
+import { uglify } from 'rollup-plugin-uglify';
 import url from '@rollup/plugin-url';
-import typescript from '@rollup/plugin-typescript';
 
+const external = [];
 const plugins = [
   json(),
   resolve(),
   url(),
-  typescript(),
+  getBabelOutputPlugin({
+    presets: [
+      "@babel/preset-env"
+    ],
+    plugins: [
+      ["@babel/plugin-proposal-decorators", {"legacy": true}],
+      ["@babel/plugin-proposal-class-properties", {"loose": true}],
+      ["@babel/plugin-proposal-pipeline-operator", {"proposal": "minimal"}],
+      ["@babel/plugin-transform-runtime"]
+    ]
+  }),
   commonjs(),
-]
+];
 
-const external = [];
+if (process.env.BUILD_ENV === 'production') {
+  plugins.push(uglify());
+}
+
 module.exports = {
-  input: 'src/index.ts',
+  input: 'src/index.js',
   output: {
-    // file: 'dist/index.js',
     dir: 'dist',
     format: 'cjs'
   },
