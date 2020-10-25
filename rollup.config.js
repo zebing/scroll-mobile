@@ -4,15 +4,21 @@ import json from '@rollup/plugin-json';
 import resolve from '@rollup/plugin-node-resolve';
 import { uglify } from 'rollup-plugin-uglify';
 import url from '@rollup/plugin-url';
+import VuePlugin from 'rollup-plugin-vue';
+import css from 'rollup-plugin-css-only';
+import scss from 'rollup-plugin-scss'
 
 const external = [];
 const plugins = [
   json(),
-  resolve(),
+  resolve({
+    extensions: [ '.mjs', '.js', '.jsx', '.json', '.vue' ]
+  }),
+  commonjs(),
   url(),
   getBabelOutputPlugin({
     presets: [
-      "@babel/preset-env"
+      "@babel/preset-env",
     ],
     plugins: [
       ["@babel/plugin-proposal-decorators", {"legacy": true}],
@@ -21,7 +27,12 @@ const plugins = [
       ["@babel/plugin-transform-runtime"]
     ]
   }),
-  commonjs(),
+  // scss(),
+  scss({ output: 'dist/scroll-mobile.css' }),
+  VuePlugin({
+    css: false,
+    // compileTemplate: true
+  }),
 ];
 
 if (process.env.BUILD_ENV === 'production') {
@@ -32,7 +43,8 @@ module.exports = {
   input: 'src/index.js',
   output: {
     dir: 'dist',
-    format: 'cjs'
+    format: 'cjs',
+    exports: 'named',
   },
   external,
   plugins,
