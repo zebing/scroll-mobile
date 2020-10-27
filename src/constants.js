@@ -1,5 +1,5 @@
 export const ACTIVATE = 'activate'; // 下拉/上拉
-export const DEACTIVEATE = 'deactivate'; // 释放
+export const DEACTIVATE = 'deactivate'; // 释放
 export const RELEASE = 'release'; // 已释放
 export const FINISH = 'finish'; // 完成
 export const PULLUP = 'pull up'; // 上拉动作
