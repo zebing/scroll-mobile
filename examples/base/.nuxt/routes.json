@@ -1,16 +1,8 @@
 [
   {
-    "name": "app",
-    "path": "/app",
-    "component": "G:\\\\github\\\\scroll-mobile\\\\examples\\\\base\\\\pages\\\\app.js",
-    "chunkName": "pages/app",
-    "_name": "_486201aa"
-  },
-  {
     "name": "index",
     "path": "/",
     "component": "G:\\\\github\\\\scroll-mobile\\\\examples\\\\base\\\\pages\\\\index.vue",
-    "chunkName": "pages/index",
-    "_name": "_098f8714"
+    "chunkName": "pages/index"
   }
 ]

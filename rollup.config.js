@@ -5,7 +5,6 @@ import resolve from '@rollup/plugin-node-resolve';
 import { uglify } from 'rollup-plugin-uglify';
 import url from '@rollup/plugin-url';
 import VuePlugin from 'rollup-plugin-vue';
-import css from 'rollup-plugin-css-only';
 import scss from 'rollup-plugin-scss'
 
 const external = [];
@@ -27,11 +26,9 @@ const plugins = [
       ["@babel/plugin-transform-runtime"]
     ]
   }),
-  // scss(),
   scss({ output: 'dist/scroll-mobile.css' }),
   VuePlugin({
     css: false,
-    // compileTemplate: true
   }),
 ];
 

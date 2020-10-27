@@ -1,6 +1,6 @@
 <template>
   <div>
-    <scroll-mobile>
+    <scroll-mobile class="scroll">
       <div class="list-item" v-for="(value, key) in list" :key="key">{{value}}</div>
     </scroll-mobile>
   </div>
@@ -19,7 +19,16 @@ export default {
   }
 };
 </script>
-<style scoped>
+<style>
+body {
+  padding: 0;
+  margin: 0!important;
+}
+
+.scroll {
+  height: 100vh;
+  width: 100vw;
+}
 .list-item {
   font-size: 30px;
   padding: 20px;
