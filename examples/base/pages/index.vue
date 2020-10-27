@@ -15,7 +15,7 @@ export default {
     };
   },
   mounted () {
-    this.list = Array.from({ length: 30 }, (value, key) => key)
+    this.list = Array.from({ length: 12 }, (value, key) => key)
   }
 };
 </script>
