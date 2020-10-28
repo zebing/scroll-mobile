@@ -176,6 +176,7 @@ export default {
           const fn = () => {
             this.indicator = FINISH;
             setTimeout(() => {
+              this.status = null;
               this.setHeight(0);
             }, 300);
           }
@@ -189,7 +190,10 @@ export default {
           // 加载回调
         } else {
           const result = this.load();
-          const fn = () => this.indicator = ACTIVATE;
+          const fn = () => {
+            this.indicator = ACTIVATE;
+            this.status = null;
+          };
 
           if (result instanceof Promise) {
             result.finally(() => setTimeout(fn, 300))
