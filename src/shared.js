@@ -1,28 +1,22 @@
-import { PULLUP, DROPDOWN } from './constants';
+import { PULLUP, DROPDOWN, RELEASE } from './constants';
 
-// 动作，上拉/下拉
-export const getAction = (preClientY, clientY) => {
-  return preClientY < clientY ? DROPDOWN : PULLUP;
+// 获取临界动作
+export const getAction = (indicator, status, startY, currentY) => {
+  const action = isDropDown(indicator, status, startY, currentY);
+  return action === DROPDOWN ? DROPDOWN : PULLUP;
+}
+
+export const isDropDown = (indicator, status, startY, currentY) => {
+  // 加载状态，判断status
+  if (RELEASE === indicator) {
+    return status === DROPDOWN;
+  }
+  
+  // 滑动状态，判断滑动位置
+  return startY <= currentY;
 }
 
 // 是否到达边界，顶部或底部
 export const isEdge = (e) => {
-  // console.log('isEdge++++', action)
-  // // 上拉到底
-  // if (action === PULLUP) {
-  //   console.log(PULLUP, 123, e.clientHeight + e.scrollTop >= e.scrollHeight);
-  //   return e.clientHeight + e.scrollTop >= e.scrollHeight;
-  // }
-
-  // // 下拉到顶
-  // if (action === DROPDOWN) {
-  //   console.log(DROPDOWN, e.scrollTop <= 0);
-  //   return e.scrollTop <= 0;
-  // }
   return (e.clientHeight + e.scrollTop >= e.scrollHeight) || (e.scrollTop <= 0) ? true : false;
-}
-
-// 设置style
-export const setHeight = (e, value) => {
-  e.style.height = `${value}px`;
 }

@@ -8,7 +8,7 @@
     @touchcancel="touchend"
   >
     <div class="scroll-mobile-refresh" ref="refresh" :class="{'scroll-mobile-transition': !onTouch}">
-      <div class="scroll-mobile-refresh-content scroll-mobile-indicator-content">{{indicator}}</div>
+      <div class="scroll-mobile-refresh-content scroll-mobile-indicator-content">{{refreshIndicator}}</div>
     </div>
     <slot></slot>
     <div class="scroll-mobile-load scroll-mobile-indicator-content">
@@ -17,7 +17,7 @@
   </div>
 </template>
 <script>
-import { isEdge } from './shared';
+import { isEdge, isDropDown } from './shared';
 import {
   ACTIVATE, 
   DEACTIVATE, 
@@ -27,7 +27,9 @@ import {
   REFRESHFREEDISTANCE, 
   DROPDOWN, 
   PULLUP, 
-  FINISH
+  FINISH,
+  REFRESHINDICATOR,
+  LOADINDICATOR
 } from './constants';
 
 export default {
@@ -35,32 +37,32 @@ export default {
 
     data () {
       this.isRequestAnimationFrame = true;
-      this.refreshHeight = 0;
+      this.refreshHeight = 0; // 刷新指示内容高度
       return {
         startY: 0, // touch start 位置
         satrtX: 0, // touch start 位置
         currentY: 0, // touch move 位置
-        onTouch: false,
-        indicator: ACTIVATE,
-        status: null,
+        onTouch: false, // touch 状态
+        indicator: ACTIVATE, // 刷新/加载指示器
+        status: null, // 刷新/加载
       }
     },
 
     computed: {
       refreshIndicator () {
         if (this.status === DROPDOWN) {
-          return this.indicator;
+          return REFRESHINDICATOR[this.indicator];
         }
 
-        return ACTIVATE;
+        return REFRESHINDICATOR[ACTIVATE];
       },
 
       loadIndicator () {
         if (this.status === PULLUP) {
-          return this.indicator;
+          return LOADINDICATOR[this.indicator];
         }
 
-        return ACTIVATE;
+        return LOADINDICATOR[ACTIVATE];
       }
     },
 
@@ -74,12 +76,16 @@ export default {
 
       touchmove (e) {
         const touch = e.touches[0];
-        const _screenY = touch.screenY;
+        const _screenY = this.currentY = touch.screenY;
         const _screenX = touch.screenX;
-        this.currentY = _screenY;
-        
-        // 横滑
-        if (Math.abs(_screenX - this.startX) > 20 * window.devicePixelRatio) {
+
+        if (!this.onTouch) {
+          return;
+        }
+
+        // 角度大于45度，视为横滑
+        if (Math.abs(_screenX - this.startX) > Math.abs(_screenY - this.startY)) {
+          this.touchstart(e);
           return;
         }
 
@@ -91,16 +97,14 @@ export default {
 
       touchend () {
         this.onTouch = false;
-
-        this.doFetch();
+        this.doCallback();
 
         if (this.indicator === DEACTIVATE) {
           this.indicator = RELEASE;
         }
 
-        const action = this.getAction(); 
-
-        if (action === DROPDOWN) {
+        // 下拉刷新，处理下拉提示内容高度
+        if (isDropDown(this.indicator, this.status, this.startY, this.currentY)) {
           this.$nextTick(() => {
             const height = this.indicator === RELEASE ? REFRESHFREEDISTANCE : 0;
             this.setHeight(height);
@@ -108,15 +112,12 @@ export default {
         }
       },
 
-      doFetch () {
-        console.log('doFetch', this.indicator)
+      doCallback () {
         if (this.indicator === RELEASE) {
           return;
         }
-        console.log('doFetch123')
 
-        const action = this.getAction();
-        if (action === DROPDOWN) {
+        if (isDropDown(this.indicator, this.status, this.startY, this.currentY)) {
           
           setTimeout(() => {
             this.indicator = FINISH;
@@ -150,10 +151,8 @@ export default {
 
       // 处理边界情况
       doEdge () {
-        const action = this.getAction();
-        console.log('action', action)
         // 下拉
-        if (action === DROPDOWN) {
+        if (isDropDown(this.indicator, this.status, this.startY, this.currentY)) {
           this.dropdown();
 
           // 上拉
@@ -183,21 +182,6 @@ export default {
         if (this.indicator !== RELEASE) {
           this.indicator = DEACTIVATE;
         }
-      },
-
-      //  获取临界动作
-      getAction () {
-        if (RELEASE === this.indicator) {
-          console.log(1)
-          return this.status;
-        }
-
-        if (this.startY <= this.currentY) {
-          console.log(2)
-          return DROPDOWN;
-        }
-        console.log(3)
-        return PULLUP;
       }
     }
 }
@@ -223,7 +207,7 @@ export default {
     height: 50px;
     line-height: 50px;
     text-align: center;
-    font-size: 24px;
+    font-size: 14px;
     color: #999;
   }
 

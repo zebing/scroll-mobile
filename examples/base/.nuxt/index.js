@@ -12,6 +12,8 @@ import { setContext, getLocation, getRouteData, normalizeError } from './utils'
 
 /* Plugins */
 
+import nuxt_plugin_responsive_5708fc0d from 'nuxt_plugin_responsive_5708fc0d' // Source: ..\\plugins\\responsive.js (mode: 'client')
+
 // Component: <ClientOnly>
 Vue.component(ClientOnly.name, ClientOnly)
 
@@ -169,6 +171,10 @@ async function createApp(ssrContext, config = {}) {
     }
   }
   // Plugin execution
+
+  if (process.client && typeof nuxt_plugin_responsive_5708fc0d === 'function') {
+    await nuxt_plugin_responsive_5708fc0d(app.context, inject)
+  }
 
   // Lock enablePreview in context
   if (process.static && process.client) {
