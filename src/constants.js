@@ -7,6 +7,7 @@ export const DROPDOWN = 'dropdown'; // 下拉动作
 export const DAMPINGCOEFFICIENT = 0.5; // 滑动距离有效系数
 export const DISTANCETOREFRESH = 80; // 下拉刷新满足的距离
 export const DISTANCETOREFLEASE = 50; // 下拉刷新释放之后的距离
+export const COMPLETEDTEXT = '全部已加载';
 
 // 刷新指示器文本
 export const REFRESHINDICATOR = {

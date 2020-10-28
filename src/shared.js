@@ -17,8 +17,8 @@ export const isDropDown = (indicator, status, startY, currentY) => {
 }
 
 // 是否到达边界，顶部或底部
-export const isEdge = (e) => {
-  return (e.clientHeight + e.scrollTop >= e.scrollHeight) || (e.scrollTop <= 0) ? true : false;
+export const isEdge = (e, startY, currentY) => {
+  return (e.clientHeight + e.scrollTop >= e.scrollHeight && startY >= currentY) || (e.scrollTop <= 0 && startY <= currentY) ? true : false;
 }
 
 // 刷新/加载默认回调

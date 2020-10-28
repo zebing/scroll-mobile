@@ -29,7 +29,8 @@ import {
   PULLUP, 
   FINISH,
   REFRESHINDICATOR,
-  LOADINDICATOR
+  LOADINDICATOR,
+  COMPLETEDTEXT
 } from './constants';
 
 export default {
@@ -39,13 +40,13 @@ export default {
       // 加载指示器文本
       loadIndicator: {
         type: Object,
-        default: () => {},
+        default: () => ({}),
       },
 
       // 刷新指示器文本
       refreshIndicator: {
         type: Object,
-        default: () => {},
+        default: () => ({}),
       },
 
       // 下拉刷新距离
@@ -54,6 +55,7 @@ export default {
         default: DISTANCETOREFRESH
       },
 
+      // 滑动阻尼系数
       dampingCoefficient: {
         type: Number,
         default: DAMPINGCOEFFICIENT
@@ -75,6 +77,18 @@ export default {
       repeat: {
         type: Function,
         default: () => {}
+      },
+
+      // 加载完成
+      completed: {
+        type: Boolean,
+        default: false,
+      },
+
+      // 全部已加载
+      completeText: {
+        type: String,
+        default: COMPLETEDTEXT
       }
     },
 
@@ -94,19 +108,26 @@ export default {
 
     computed: {
       refreshIndicatorText () {
+        let indicator = ACTIVATE;
         if (this.status === DROPDOWN) {
-          return this.refreshIndicator[this.indicator] || REFRESHINDICATOR[this.indicator];
+          indicator = this.indicator;
         }
 
-        return this.refreshIndicator[ACTIVATE] || REFRESHINDICATOR[ACTIVATE];
+        return this.refreshIndicator[indicator] || REFRESHINDICATOR[indicator];
       },
 
       loadIndicatorText () {
-        if (this.status === PULLUP) {
-          return this.loadIndicator[this.indicator] || LOADINDICATOR[this.indicator];
+        // 全部已加载
+        if (this.completed) {
+          return this.completeText;
         }
 
-        return this.loadIndicator[ACTIVATE] || LOADINDICATOR[ACTIVATE];
+        let indicator = ACTIVATE;
+        if (this.status === PULLUP) {
+          indicator = this.indicator;
+        }
+
+        return this.loadIndicator[indicator] || LOADINDICATOR[indicator];
       }
     },
 
@@ -133,7 +154,7 @@ export default {
           return;
         }
 
-        this.edge = isEdge(this.$refs['scroll']);
+        this.edge = isEdge(this.$refs['scroll'], this.startY, this.currentY);
         // 到达边界
         if (this.edge) {
           this.doEdge();
@@ -142,7 +163,9 @@ export default {
 
       touchend () {
         this.onTouch = false;
-        this.doCallback();
+        this.startY = 0;
+        this.currentY = 0;
+        this.edge && this.doCallback();
 
         if (this.indicator === DEACTIVATE) {
           this.indicator = RELEASE;
@@ -161,7 +184,7 @@ export default {
         // 当前已有回调状态未完成
         if (this.indicator === RELEASE) {
           const dropdown = this.startY <= this.currentY;
-          this.edge && this.repeat({
+           this.repeat({
             action: this.status,
             same: dropdown 
               ? (this.status === DROPDOWN) 
@@ -182,13 +205,18 @@ export default {
           }
 
           if (result instanceof Promise) {
-            result.finally(() => setTimeout(fn, 300));
+            result.finally(() => setTimeout(fn, 1000));
           } else {
-            setTimeout(fn, 300);
+            setTimeout(fn, 1000);
           }
           
           // 加载回调
         } else {
+          // 全部已加载
+          if (this.completed) {
+            return;
+          }
+
           const result = this.load();
           const fn = () => {
             this.indicator = ACTIVATE;
@@ -196,14 +224,15 @@ export default {
           };
 
           if (result instanceof Promise) {
-            result.finally(() => setTimeout(fn, 300))
+            result.finally(() => setTimeout(fn, 1000))
           } else {
-            setTimeout(fn, 300);
+            setTimeout(fn, 1000);
           }
         }
       },
 
       touchmoveThrottle (e) {
+        e.stopPropagation();
         if (this.isRequestAnimationFrame) {
           this.isRequestAnimationFrame = false;
           const requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame;
@@ -249,6 +278,11 @@ export default {
 
       // 上拉
       pullup () {
+        // 全部已加载
+        if (this.completed) {
+          return;
+        }
+
         this.status = PULLUP;
         if (this.indicator !== RELEASE) {
           this.indicator = DEACTIVATE;

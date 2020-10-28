@@ -2,11 +2,10 @@
   <div>
     <scroll-mobile
       class="scroll"
-      :loadIndicator="loadIndicator"
-      :refreshIndicator="loadIndicator"
       :dampingCoefficient="0.6"
       :refresh="refresh"
       :repeat="repeat"
+      :completed="true"
     >
       <div class="Item" v-for="(data, index) in list" :key="index">
         <div class="left">
@@ -72,7 +71,7 @@ export default {
         console.log('refresh++++')
         setTimeout(() => {
           resolve();
-        }, 1000);
+        }, 0);
       })
     },
     repeat (info) {

@@ -12,5 +12,9 @@
   "license": "ISC",
   "dependencies": {
     "nuxt": "^2.14.7"
+  },
+  "devDependencies": {
+    "sass": "^1.27.0",
+    "sass-loader": "^10.0.4"
   }
 }
