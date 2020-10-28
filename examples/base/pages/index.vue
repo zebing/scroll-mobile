@@ -1,6 +1,13 @@
 <template>
   <div>
-    <scroll-mobile class="scroll">
+    <scroll-mobile
+      class="scroll"
+      :loadIndicator="loadIndicator"
+      :refreshIndicator="loadIndicator"
+      :dampingCoefficient="0.6"
+      :refresh="refresh"
+      :repeat="repeat"
+    >
       <div class="Item" v-for="(data, index) in list" :key="index">
         <div class="left">
           <div class="title">
@@ -32,6 +39,12 @@ export default {
   data() {
     return {
       list: [],
+      loadIndicator: {
+        activate: '下拉刷新props',
+        deactivate: '释放刷新props',
+        release: '刷新中...props',
+        finish: '刷新完成props',
+      }
     };
   },
   mounted () {
@@ -51,6 +64,20 @@ export default {
     }
 
     this.list = Array.from({ length: 12 }, (value, key) => key%2 ? item : item1)
+  },
+
+  methods: {
+    refresh () {
+      return new Promise((resolve, reject) => {
+        console.log('refresh++++')
+        setTimeout(() => {
+          resolve();
+        }, 1000);
+      })
+    },
+    repeat (info) {
+      console.log('repeat', info)
+    }
   }
 };
 </script>

@@ -8,23 +8,23 @@
     @touchcancel="touchend"
   >
     <div class="scroll-mobile-refresh" ref="refresh" :class="{'scroll-mobile-transition': !onTouch}">
-      <div class="scroll-mobile-refresh-content scroll-mobile-indicator-content">{{refreshIndicator}}</div>
+      <div class="scroll-mobile-refresh-content scroll-mobile-indicator-content">{{refreshIndicatorText}}</div>
     </div>
     <slot></slot>
     <div class="scroll-mobile-load scroll-mobile-indicator-content">
-      {{loadIndicator}}
+      {{loadIndicatorText}}
     </div>
   </div>
 </template>
 <script>
-import { isEdge, isDropDown } from './shared';
+import { isEdge, isDropDown, callback } from './shared';
 import {
   ACTIVATE, 
   DEACTIVATE, 
   RELEASE, 
-  COEFFICIENT, 
-  REFRESHDISTANCE, 
-  REFRESHFREEDISTANCE, 
+  DAMPINGCOEFFICIENT, 
+  DISTANCETOREFRESH, 
+  DISTANCETOREFLEASE, 
   DROPDOWN, 
   PULLUP, 
   FINISH,
@@ -35,34 +35,78 @@ import {
 export default {
     name: 'scroll-mobile',
 
+    props: {
+      // 加载指示器文本
+      loadIndicator: {
+        type: Object,
+        default: () => {},
+      },
+
+      // 刷新指示器文本
+      refreshIndicator: {
+        type: Object,
+        default: () => {},
+      },
+
+      // 下拉刷新距离
+      distanceToRefresh: {
+        type: Number,
+        default: DISTANCETOREFRESH
+      },
+
+      dampingCoefficient: {
+        type: Number,
+        default: DAMPINGCOEFFICIENT
+      },
+
+      // 刷新回调
+      refresh: {
+        type: Function,
+        default: callback,
+      },
+
+      // 加载回调
+      load: {
+        type: Function,
+        default: callback,
+      },
+
+      // 重复请求提示回调
+      repeat: {
+        type: Function,
+        default: () => {}
+      }
+    },
+
     data () {
-      this.isRequestAnimationFrame = true;
-      this.refreshHeight = 0; // 刷新指示内容高度
       return {
+        isRequestAnimationFrame: true,
+        refreshHeight: 0, // 刷新指示内容高度
         startY: 0, // touch start 位置
         satrtX: 0, // touch start 位置
         currentY: 0, // touch move 位置
         onTouch: false, // touch 状态
         indicator: ACTIVATE, // 刷新/加载指示器
         status: null, // 刷新/加载
+        edge: false, // 滑动到达边界
       }
     },
 
     computed: {
-      refreshIndicator () {
+      refreshIndicatorText () {
         if (this.status === DROPDOWN) {
-          return REFRESHINDICATOR[this.indicator];
+          return this.refreshIndicator[this.indicator] || REFRESHINDICATOR[this.indicator];
         }
 
-        return REFRESHINDICATOR[ACTIVATE];
+        return this.refreshIndicator[ACTIVATE] || REFRESHINDICATOR[ACTIVATE];
       },
 
-      loadIndicator () {
+      loadIndicatorText () {
         if (this.status === PULLUP) {
-          return LOADINDICATOR[this.indicator];
+          return this.loadIndicator[this.indicator] || LOADINDICATOR[this.indicator];
         }
 
-        return LOADINDICATOR[ACTIVATE];
+        return this.loadIndicator[ACTIVATE] || LOADINDICATOR[ACTIVATE];
       }
     },
 
@@ -89,8 +133,9 @@ export default {
           return;
         }
 
+        this.edge = isEdge(this.$refs['scroll']);
         // 到达边界
-        if (isEdge(this.$refs['scroll'])) {
+        if (this.edge) {
           this.doEdge();
         }
       },
@@ -106,29 +151,51 @@ export default {
         // 下拉刷新，处理下拉提示内容高度
         if (isDropDown(this.indicator, this.status, this.startY, this.currentY)) {
           this.$nextTick(() => {
-            const height = this.indicator === RELEASE ? REFRESHFREEDISTANCE : 0;
+            const height = this.indicator === RELEASE ? DISTANCETOREFLEASE : 0;
             this.setHeight(height);
           })
         }
       },
 
       doCallback () {
+        // 当前已有回调状态未完成
         if (this.indicator === RELEASE) {
+          const dropdown = this.startY <= this.currentY;
+          this.edge && this.repeat({
+            action: this.status,
+            same: dropdown 
+              ? (this.status === DROPDOWN) 
+              : (this.status === PULLUP),
+          });
           return;
         }
 
+        // 刷新回调
         if (isDropDown(this.indicator, this.status, this.startY, this.currentY)) {
-          
-          setTimeout(() => {
+          const result = this.refresh();
+          const fn = () => {
             this.indicator = FINISH;
-            this.$nextTick(() => {
+            setTimeout(() => {
               this.setHeight(0);
-            })
-          }, 300);
+            }, 300);
+          }
+
+          if (result instanceof Promise) {
+            result.finally(() => setTimeout(fn, 300));
+          } else {
+            setTimeout(fn, 300);
+          }
+          
+          // 加载回调
         } else {
-          setTimeout(() => {
-            this.indicator = ACTIVATE;
-          }, 300);
+          const result = this.load();
+          const fn = () => this.indicator = ACTIVATE;
+
+          if (result instanceof Promise) {
+            result.finally(() => setTimeout(fn, 300))
+          } else {
+            setTimeout(fn, 300);
+          }
         }
       },
 
@@ -163,11 +230,11 @@ export default {
 
       // 下拉
       dropdown () {
-        let indicator = REFRESHDISTANCE <= this.refreshHeight ? DEACTIVATE : ACTIVATE;
-        let height = (this.currentY - this.startY) * COEFFICIENT;
+        let indicator = this.distanceToRefresh <= this.refreshHeight ? DEACTIVATE : ACTIVATE;
+        let height = (this.currentY - this.startY) * this.dampingCoefficient;
 
         if (this.indicator === RELEASE) {
-          height = Math.max(height + REFRESHFREEDISTANCE, REFRESHFREEDISTANCE);
+          height = Math.max(height + DISTANCETOREFLEASE, DISTANCETOREFLEASE);
           indicator = RELEASE;
         }
 

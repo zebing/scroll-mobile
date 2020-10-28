@@ -20,3 +20,8 @@ export const isDropDown = (indicator, status, startY, currentY) => {
 export const isEdge = (e) => {
   return (e.clientHeight + e.scrollTop >= e.scrollHeight) || (e.scrollTop <= 0) ? true : false;
 }
+
+// 刷新/加载默认回调
+export const callback = () => new Promise((resolve) => {
+  setTimeout(resolve, 300);
+})
