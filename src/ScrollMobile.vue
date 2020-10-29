@@ -103,6 +103,7 @@ export default {
         indicator: ACTIVATE, // 刷新/加载指示器
         status: null, // 刷新/加载
         edge: false, // 滑动到达边界
+        hasTouchmove: false, // 是否经过touchmove
       }
     },
 
@@ -137,12 +138,14 @@ export default {
         this.startY = this.currentY = touch.screenY;
         this.startX = touch.screenX;
         this.onTouch = true;
+        this.hasTouchmove = false;
       },
 
       touchmove (e) {
         const touch = e.touches[0];
         const _screenY = this.currentY = touch.screenY;
         const _screenX = touch.screenX;
+        this.hasTouchmove = true;
 
         if (!this.onTouch) {
           return;
@@ -165,6 +168,12 @@ export default {
         this.onTouch = false;
         this.startY = 0;
         this.currentY = 0;
+
+        if (!this.hasTouchmove) {
+          return;
+        }
+
+        this.hasTouchmove = false;
         this.edge && this.doCallback();
 
         if (this.indicator === DEACTIVATE) {
@@ -265,7 +274,6 @@ export default {
       dropdown () {
         let indicator = this.distanceToRefresh <= this.refreshHeight ? DEACTIVATE : ACTIVATE;
         let height = (this.currentY - this.startY) * this.dampingCoefficient;
-
         if (this.indicator === RELEASE) {
           height = Math.max(height + DISTANCETOREFLEASE, DISTANCETOREFLEASE);
           indicator = RELEASE;

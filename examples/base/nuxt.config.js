@@ -20,5 +20,6 @@ module.exports = {
 
   plugins: [
     { src: '~/plugins/responsive.js', ssr: false },
+    { src: '~/plugins/eruda.js', ssr: false },
   ],
 }

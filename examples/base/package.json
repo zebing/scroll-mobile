@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "eruda": "^2.4.1",
     "nuxt": "^2.14.7"
   },
   "devDependencies": {
