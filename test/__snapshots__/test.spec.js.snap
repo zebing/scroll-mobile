@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div
+  class="scroll-mobile"
+>
+  <div
+    class="scroll-mobile-refresh scroll-mobile-transition"
+  >
+    <div
+      class="scroll-mobile-refresh-content scroll-mobile-indicator-content"
+    >
+      下拉刷新
+    </div>
+  </div>
+    
+  <div
+    class="scroll-mobile-load scroll-mobile-indicator-content"
+  >
+    
+    上拉加载更多
+  
+  </div>
+</div>
+`;
