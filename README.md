@@ -1,13 +1,38 @@
 # scroll-mobile
 一个移动端页面高性能滑动加载组件
 
+### 如何使用
+```
+// 安装
+npm install scroll-mobile
+
+// 使用
+import 'scroll-mobile/scroll-mobile.css';
+import ScrollMobile from 'scroll-mobile';
+```
+
 | name     | description    | type     | default      |
 |----------|----------------|----------|--------------|
-| distanceToRefresh | distance to pull to refresh | number | 50  |
-| refreshing | Whether the view should be indicating an active refresh | bool | false |
-| onRefresh  | Called when the view starts refreshing. | () => void | - |
-| indicator  | indicator config | Object | `{ activate: 'release', deactivate: 'pull', release: 'loading', finish: 'finish' }` |
-| className | additional css class of root dom node | String | - |
-| prefixCls | prefix class | String | 'rmc-pull-to-refresh' |
-| damping | pull damping, suggest less than 200 | number | 100 |
-| scale | damping scale | number | 0.6 |
+| loadIndicator | 加载指示器内容 | Object | `{ activate: '下拉刷新', deactivate: '释放刷新', release: '刷新中...',  finish: '刷新完成' }`  |
+| refreshIndicator | 刷新指示器内容 | Object | `{ activate: '上拉加载更多', deactivate: '释放加载', release: '加载中...', finish: '加载完成' }` |
+| distanceToRefresh  | 下拉刷新距离 | Number | 80 |
+| dampingCoefficient  | 滑动阻尼系数 | Number | 0.5 |
+| refresh | 刷新回调, 函数返回值为promise时，指示器刷新状态将交由primise管理，否则加载状态300毫秒将自动关闭 | Function | - |
+| load | 加载回调, 函数返回值为promise时，指示器刷新状态将交由primise管理，否则加载状态300毫秒将自动关闭 | Function | - |
+| repeat | 请求动作重复，比如加载未完成继续下拉或向上滑动加载 | Function | - |
+| completed | 是否加载完成 | Boolean | false |
+| completeText | 全部已加载提示文本 | String | 全部已加载 |
+
+## 例子
+
+首先运行
+```
+npm run build
+
+cd examples/base
+
+npm run dev
+```
+
+打开链接 ```http://localhost:8000```
+
