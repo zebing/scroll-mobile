@@ -1,8 +1,8 @@
 {
   "name": "scroll-mobile",
   "version": "1.0.0",
-  "description": "一个移动端页面高性能滑动加载组件",
-  "main": "index.js",
+  "description": "一个移动端页面原生体验高性能滑动加载组件",
+  "main": "dist/index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development BUILD_ENV=development rollup -c -w",
     "build": "del dist && cross-env NODE_ENV=production BUILD_ENV=production rollup -c",
@@ -22,7 +22,7 @@
     "type": "git",
     "url": "git+https://github.com/zebing/scroll-mobile.git"
   },
-  "keywords": [],
+  "keywords": ["scroll-mobile", "scroll"],
   "author": "",
   "license": "ISC",
   "bugs": {
