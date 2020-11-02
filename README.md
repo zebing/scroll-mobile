@@ -7,7 +7,7 @@
 npm install scroll-mobile
 
 // 使用
-import 'scroll-mobile/scroll-mobile.css';
+import 'scroll-mobile/dist/scroll-mobile.css';
 import ScrollMobile from 'scroll-mobile';
 ```
 
