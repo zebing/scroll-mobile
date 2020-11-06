@@ -27,11 +27,12 @@ import ScrollMobile from 'scroll-mobile';
 
 首先运行
 ```
+npm i
 npm run build
 
 cd examples/base
-
-npm run dev
+npm i
+npm run start
 ```
 
 打开链接 ```http://localhost:8000```
