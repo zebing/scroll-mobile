@@ -6,6 +6,9 @@
       :refresh="refresh"
       :repeat="repeat"
       :load="load"
+      @touchstart="touchstart"
+      @touchmove="touchmove"
+      @touchend="touchend"
     >
       <div class="Item" v-for="(data, index) in list" :key="index">
         <div class="left">
@@ -66,6 +69,15 @@ export default {
   },
 
   methods: {
+    touchstart() {
+      console.log('touchstart')
+    },
+    touchmove() {
+      console.log('touchmove')
+    },
+    touchend() {
+      console.log('touchend')
+    },
     refresh () {
       return new Promise((resolve, reject) => {
         console.log('refresh++++')

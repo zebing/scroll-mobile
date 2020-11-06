@@ -139,6 +139,7 @@ export default {
         this.startX = touch.screenX;
         this.onTouch = true;
         this.hasTouchmove = false;
+        this.$emit('touchstart', e);
       },
 
       touchmove (e) {
@@ -162,9 +163,10 @@ export default {
         if (this.edge) {
           this.doEdge();
         }
+        this.$emit('touchmove', e);
       },
 
-      touchend () {
+      touchend (e) {
         // 没有滑动，直接返回
         if (!this.hasTouchmove) {
           return;
@@ -191,6 +193,7 @@ export default {
         this.onTouch = false;
         this.startY = 0;
         this.currentY = 0;
+        this.$emit('touchend', e);
       },
 
       doCallback () {
