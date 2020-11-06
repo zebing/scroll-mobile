@@ -76,7 +76,28 @@ export default {
     },
 
     load () {
-      console.log('++++load')
+      const item = {
+      image: "https://img.zhitongcaijing.com/astock/13.jpg?x-oss-process=image/format,jpg/quality,Q_100/resize,h_300",
+      source: "第三方资讯",
+      title: "智通港股早知道︱(10月28日)蚂蚁集团(06688)首日打新火热，带动腾讯(00700)价值重估",
+      time: "2020-10-28 07:45",
+    }
+
+    const item1 = {
+      image: "https://img.zhitongcaijing.com/image/20201028/20201028033516_59770.png?x-oss-process=image/format,jpg/quality,Q_80",
+      source: "第三方资讯",
+      title: "摩根大通：若特朗普成功连任，美股或将出现两位数涨幅",
+      time: "2020-10-28 07:45",
+    }
+
+    const list = Array.from({ length: 12 }, (value, key) => key%2 ? item : item1)
+      return new Promise((resolve, reject) => {
+        console.log('refresh++++')
+        setTimeout(() => {
+          this.list = [...this.list, ...list]
+          resolve();
+        }, 1000);
+      })
     },
     repeat (info) {
       console.log('repeat', info)

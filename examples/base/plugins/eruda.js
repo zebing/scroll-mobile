@@ -1,10 +1,10 @@
-// import eruda from 'eruda';
+import eruda from 'eruda';
 
-// let el = document.createElement('div');
-// document.body.appendChild(el);
+let el = document.createElement('div');
+document.body.appendChild(el);
 
-// eruda.init({
-//     container: el,
-//     tool: ['console', 'elements'],
-//     useShadowDom: true
-// });
+eruda.init({
+    container: el,
+    // tool: ['console', 'elements'],
+    useShadowDom: true
+});
