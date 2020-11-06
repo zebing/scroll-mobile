@@ -165,10 +165,6 @@ export default {
       },
 
       touchend () {
-        this.onTouch = false;
-        this.startY = 0;
-        this.currentY = 0;
-
         if (!this.hasTouchmove) {
           return;
         }
@@ -187,6 +183,10 @@ export default {
             this.setHeight(height);
           })
         }
+
+        this.onTouch = false;
+        this.startY = 0;
+        this.currentY = 0;
       },
 
       doCallback () {
@@ -201,7 +201,7 @@ export default {
           });
           return;
         }
-
+        
         // 刷新回调
         if (isDropDown(this.indicator, this.status, this.startY, this.currentY)) {
           const result = this.refresh();

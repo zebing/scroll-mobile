@@ -5,7 +5,7 @@
       :dampingCoefficient="0.6"
       :refresh="refresh"
       :repeat="repeat"
-      :completed="true"
+      :load="load"
     >
       <div class="Item" v-for="(data, index) in list" :key="index">
         <div class="left">
@@ -73,6 +73,10 @@ export default {
           resolve();
         }, 0);
       })
+    },
+
+    load () {
+      console.log('++++load')
     },
     repeat (info) {
       console.log('repeat', info)
