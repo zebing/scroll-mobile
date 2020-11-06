@@ -165,12 +165,15 @@ export default {
       },
 
       touchend () {
+        // 没有滑动，直接返回
         if (!this.hasTouchmove) {
           return;
         }
 
-        this.hasTouchmove = false;
-        this.edge && this.doCallback();
+        // 没有滑动到边界，不触发回调处理
+        if (this.edge) {
+          this.doCallback();
+        }
 
         if (this.indicator === DEACTIVATE) {
           this.indicator = RELEASE;
@@ -184,12 +187,16 @@ export default {
           })
         }
 
+        this.hasTouchmove = false;
         this.onTouch = false;
         this.startY = 0;
         this.currentY = 0;
       },
 
       doCallback () {
+        // 指示器状态为 activate, finish 不做任何回调处理
+        if (this.indicator === ACTIVATE || this.indicator === FINISH) return;
+
         // 当前已有回调状态未完成
         if (this.indicator === RELEASE) {
           const dropdown = this.startY <= this.currentY;
@@ -201,7 +208,7 @@ export default {
           });
           return;
         }
-        
+
         // 刷新回调
         if (isDropDown(this.indicator, this.status, this.startY, this.currentY)) {
           const result = this.refresh();
