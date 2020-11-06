@@ -221,9 +221,9 @@ export default {
           }
 
           if (result instanceof Promise) {
-            result.finally(() => setTimeout(fn, 1000));
+            result.finally(() => setTimeout(fn, 600));
           } else {
-            setTimeout(fn, 1000);
+            setTimeout(fn, 600);
           }
           
           // 加载回调
@@ -240,9 +240,9 @@ export default {
           };
 
           if (result instanceof Promise) {
-            result.finally(() => setTimeout(fn, 1000))
+            result.finally(() => setTimeout(fn, 600))
           } else {
-            setTimeout(fn, 1000);
+            setTimeout(fn, 600);
           }
         }
       },
