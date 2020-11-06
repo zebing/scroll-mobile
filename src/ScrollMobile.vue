@@ -11,7 +11,7 @@
       <div class="scroll-mobile-refresh-content scroll-mobile-indicator-content">{{refreshIndicatorText}}</div>
     </div>
     <slot></slot>
-    <div class="scroll-mobile-load scroll-mobile-indicator-content">
+    <div v-show="pulledup" class="scroll-mobile-load scroll-mobile-indicator-content">
       {{loadIndicatorText}}
     </div>
   </div>
@@ -104,6 +104,7 @@ export default {
         status: null, // 刷新/加载
         edge: false, // 滑动到达边界
         hasTouchmove: false, // 是否经过touchmove
+        pulledup: false, // 是否上拉过
       }
     },
 
@@ -156,6 +157,11 @@ export default {
         if (Math.abs(_screenX - this.startX) > Math.abs(_screenY - this.startY)) {
           this.touchstart(e);
           return;
+        }
+
+        // 上拉
+        if (!isDropDown(this.indicator, this.status, this.startY, this.currentY)) {
+          this.pulledup = true;
         }
 
         this.edge = isEdge(this.$refs['scroll'], this.startY, this.currentY);
@@ -298,6 +304,7 @@ export default {
 
       // 上拉
       pullup () {
+
         // 全部已加载
         if (this.completed) {
           return;
