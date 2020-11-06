@@ -1,6 +1,6 @@
 {
   "name": "scroll-mobile",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "一个移动端页面原生体验高性能滑动加载组件",
   "main": "dist/index.js",
   "scripts": {
