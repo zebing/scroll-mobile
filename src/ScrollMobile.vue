@@ -261,6 +261,8 @@ export default {
 
       // 设置高度
       setHeight (value) {
+        // 请求时间过长，切换到别的页面，dom被销毁的情况
+        if(!this.$refs['refresh']) return;
         this.refreshHeight = value;
         this.$refs['refresh'].style.height = `${this.refreshHeight}px`;
       },
