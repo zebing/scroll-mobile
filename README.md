@@ -25,7 +25,9 @@ import ScrollMobile from 'scroll-mobile';
 
 ## 例子
 
-首先运行
+线上链接：[https://0pbs5.csb.app/](https://0pbs5.csb.app/)
+
+本地查看：
 ```
 npm i
 npm run build
