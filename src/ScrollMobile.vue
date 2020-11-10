@@ -225,6 +225,7 @@ export default {
             this.indicator = FINISH;
             setTimeout(() => {
               this.status = null;
+              this.indicator = ACTIVATE;
               this.setHeight(0);
             }, 300);
           }

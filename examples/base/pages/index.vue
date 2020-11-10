@@ -83,7 +83,7 @@ export default {
         console.log('refresh++++')
         setTimeout(() => {
           resolve();
-        }, 0);
+        }, 3000);
       })
     },
 
@@ -108,7 +108,7 @@ export default {
         setTimeout(() => {
           this.list = [...this.list, ...list]
           resolve();
-        }, 1000);
+        }, 3000);
       })
     },
     repeat (info) {
